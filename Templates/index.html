@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+
+{% block title %}EcoJourney - AI-Powered Sustainable Tourism Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg min-h-screen flex items-center relative overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-eco-500/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-float"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Hero Content -->
+            <div class="space-y-8">
+                <div class="inline-flex items-center px-4 py-2 rounded-full glass text-sm">
+                    <span class="w-2 h-2 bg-eco-400 rounded-full mr-2 animate-pulse"></span>
+                    <span class="text-eco-300">AI-Powered Sustainable Travel</span>
+                </div>
+                
+                <h1 class="font-display text-5xl md:text-7xl font-bold leading-tight">
+                    Travel <span class="gradient-text">Sustainably</span>,
+                    <br>Explore Responsibly
+                </h1>
+                
+                <p class="text-gray-300 text-lg md:text-xl max-w-lg">
+                    Plan eco-friendly trips with our rule-based AI. Calculate your carbon footprint, 
+                    discover sustainable destinations, and experience culture through Augmented Reality.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/planner" class="px-8 py-4 bg-gradient-to-r from-eco-500 to-teal-500 rounded-xl font-semibold text-lg hover:from-eco-600 hover:to-teal-600 transition-all transform hover:scale-105 text-center eco-glow">
+                        Start Planning
+                    </a>
+                    <a href="/ar" class="px-8 py-4 glass rounded-xl font-semibold text-lg hover:bg-white/20 transition-all flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <span>Try AR Experience</span>
+                    </a>
+                </div>
+                
+                <!-- Trust Badges -->
+                <div class="flex flex-wrap gap-6 pt-4">
+                    <div class="flex items-center space-x-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-eco-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>ISO 14001 Aligned</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-eco-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>GDPR Compliant</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-gray-400">
+                        <svg class="w-5 h-5 text-eco-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>UNWTO Guidelines</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hero Visual -->
+            <div class="relative hidden lg:block">
+                <div class="relative w-full h-96">
+                    <!-- Floating Cards -->
+                    <div class="absolute top-0 right-0 glass rounded-2xl p-4 animate-float shadow-2xl" style="animation-delay: 0s;">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-eco-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-eco-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Eco Score</p>
+                                <p class="font-bold text-xl text-eco-400">9.2/10</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute top-1/3 left-0 glass rounded-2xl p-4 animate-float shadow-2xl" style="animation-delay: 1s;">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Carbon Saved</p>
+                                <p class="font-bold text-xl text-cyan-400">42 kg</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute bottom-10 right-10 glass rounded-2xl p-4 animate-float shadow-2xl" style="animation-delay: 2s;">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Destinations</p>
+                                <p class="font-bold text-xl text-purple-400">10+ Eco</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Central Globe/Earth Icon -->
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <div class="w-48 h-48 bg-gradient-to-br from-eco-500/30 to-teal-500/30 rounded-full flex items-center justify-center eco-glow">
+                            <svg class="w-24 h-24 text-eco-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">
+                Five Pillars of <span class="gradient-text">Sustainable Travel</span>
+            </h2>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                Our platform addresses all key aspects of sustainable tourism through intelligent, rule-based systems.
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1: Travel Recommendations -->
+            <a href="/planner" class="group glass rounded-2xl p-6 card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-eco-500 to-eco-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Personalized Recommendations</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    AI-driven itineraries based on budget, travel type, duration, and sustainability preferences. No datasets, pure logic.
+                </p>
+                <div class="flex items-center text-eco-400 text-sm font-medium">
+                    <span>Plan Your Trip</span>
+                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </div>
+            </a>
+            
+            <!-- Feature 2: Carbon Calculator -->
+            <a href="/carbon" class="group glass rounded-2xl p-6 card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Environmental Impact</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    Calculate carbon footprint using ISO 14001 aligned factors. View eco-scores and discover greener alternatives.
+                </p>
+                <div class="flex items-center text-cyan-400 text-sm font-medium">
+                    <span>Calculate Impact</span>
+                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </div>
+            </a>
+            
+            <!-- Feature 3: Dynamic Pricing -->
+            <a href="/pricing" class="group glass rounded-2xl p-6 card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Dynamic Pricing</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    Logic-based pricing insights with seasonal and demand factors. Find the best time to book your sustainable trip.
+                </p>
+                <div class="flex items-center text-purple-400 text-sm font-medium">
+                    <span>View Pricing</span>
+                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </div>
+            </a>
+            
+            <!-- Feature 4: Local Economy -->
+            <a href="/local" class="group glass rounded-2xl p-6 card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Local Economy</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    Connect with local guides, homestays, and community tourism. Support UNWTO sustainable development goals.
+                </p>
+                <div class="flex items-center text-amber-400 text-sm font-medium">
+                    <span>Explore Local</span>
+                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </div>
+            </a>
+            
+            <!-- Feature 5: AR Experience -->
+            <a href="/ar" class="group glass rounded-2xl p-6 card-hover md:col-span-2 lg:col-span-2">
+                <div class="flex flex-col md:flex-row md:items-center gap-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-display text-xl font-bold mb-2">Augmented Reality Cultural Engagement</h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Experience cultural sites through WebAR. Point your camera at AR markers to discover heritage information, 
+                            sustainability tips, and local stories. Built with AR.js and A-Frame - no app download required.
+                        </p>
+                        <div class="flex items-center text-rose-400 text-sm font-medium">
+                            <span>Launch AR Experience</span>
+                            <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Destinations -->
+<section class="py-20 bg-slate-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">
+                Featured <span class="gradient-text">Eco Destinations</span>
+            </h2>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                Discover handpicked sustainable destinations with high eco-scores and responsible tourism practices.
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for dest in destinations %}
+            <div class="group relative overflow-hidden rounded-2xl bg-slate-800 card-hover">
+                <!-- Placeholder Image with Gradient -->
+                <div class="h-48 bg-gradient-to-br from-eco-600/30 to-teal-600/30 relative">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-eco-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <!-- Eco Score Badge -->
+                    <div class="absolute top-4 right-4 px-3 py-1 bg-eco-500/90 rounded-full text-sm font-bold">
+                        {{ dest.eco_score }}/10 Eco
+                    </div>
+                </div>
+                
+                <div class="p-5">
+                    <h3 class="font-display text-lg font-bold mb-2">{{ dest.name }}</h3>
+                    <p class="text-gray-400 text-sm mb-4 line-clamp-2">{{ dest.description }}</p>
+                    
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {% for type in dest.type[:2] %}
+                        <span class="px-2 py-1 bg-slate-700 rounded-lg text-xs text-gray-300">{{ type|capitalize }}</span>
+                        {% endfor %}
+                        <span class="px-2 py-1 bg-eco-500/20 rounded-lg text-xs text-eco-400">{{ dest.carbon_rating|capitalize }} Carbon</span>
+                    </div>
+                    
+                    <a href="/planner" class="flex items-center text-eco-400 text-sm font-medium group-hover:text-eco-300">
+                        <span>Explore</span>
+                        <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="/planner" class="inline-flex items-center px-6 py-3 glass rounded-xl font-medium hover:bg-white/20 transition-all">
+                <span>View All Destinations</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-20 bg-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">
+                How <span class="gradient-text">EcoJourney</span> Works
+            </h2>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                Simple steps to plan your sustainable adventure
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-eco-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="font-display text-2xl font-bold text-eco-400">1</span>
+                </div>
+                <h3 class="font-semibold mb-2">Share Preferences</h3>
+                <p class="text-gray-400 text-sm">Enter your budget, travel style, duration, and eco preferences</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="font-display text-2xl font-bold text-cyan-400">2</span>
+                </div>
+                <h3 class="font-semibold mb-2">Get Recommendations</h3>
+                <p class="text-gray-400 text-sm">Our rule-based AI matches you with sustainable destinations</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="font-display text-2xl font-bold text-purple-400">3</span>
+                </div>
+                <h3 class="font-semibold mb-2">Review Impact</h3>
+                <p class="text-gray-400 text-sm">See carbon footprint and discover greener alternatives</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-rose-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="font-display text-2xl font-bold text-rose-400">4</span>
+                </div>
+                <h3 class="font-semibold mb-2">Experience AR</h3>
+                <p class="text-gray-400 text-sm">Use AR at destinations to learn about culture and sustainability</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-eco-600 to-teal-600">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">
+            Ready to Travel Sustainably?
+        </h2>
+        <p class="text-eco-100 text-lg mb-8 max-w-2xl mx-auto">
+            Start planning your eco-friendly journey today. No sign-up required, no data stored – just intelligent travel planning.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/planner" class="px-8 py-4 bg-white text-eco-600 rounded-xl font-semibold text-lg hover:bg-eco-50 transition-all transform hover:scale-105">
+                Start Planning Now
+            </a>
+            <a href="/carbon" class="px-8 py-4 bg-eco-700 text-white rounded-xl font-semibold text-lg hover:bg-eco-800 transition-all">
+                Calculate Carbon Footprint
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

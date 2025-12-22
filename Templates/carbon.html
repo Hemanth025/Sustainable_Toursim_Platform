@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% block title %}Carbon Calculator - EcoJourney{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-slate-900 py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center px-4 py-2 rounded-full glass text-sm mb-4">
+                <span class="w-2 h-2 bg-cyan-400 rounded-full mr-2"></span>
+                <span class="text-cyan-300">ISO 14001 Aligned</span>
+            </div>
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">Carbon <span class="gradient-text">Footprint
+                    Calculator</span></h1>
+            <p class="text-gray-400 text-lg">Measure your environmental impact and discover greener alternatives</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+            <div class="glass rounded-2xl p-6">
+                <h2 class="font-display text-xl font-bold mb-6">Calculate Your Impact</h2>
+                <form method="POST" action="/carbon" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Transport Mode</label>
+                        <select name="transport"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500 focus:ring-1 focus:ring-eco-500">
+                            <option value="flight">✈️ Flight</option>
+                            <option value="train" selected>🚂 Train (Recommended)</option>
+                            <option value="bus">🚌 Bus</option>
+                            <option value="car">🚗 Car</option>
+                            <option value="electric_car">⚡ Electric Car</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Distance (km)</label>
+                        <input type="number" name="distance" value="500" min="1" max="10000"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Passengers (for car)</label>
+                        <input type="number" name="passengers" value="1" min="1" max="6"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Accommodation</label>
+                        <select name="accommodation"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500">
+                            <option value="luxury_hotel">🏨 Luxury Hotel</option>
+                            <option value="standard_hotel" selected>🏢 Standard Hotel</option>
+                            <option value="budget_hotel">🛏️ Budget Hotel</option>
+                            <option value="homestay">🏡 Homestay (Recommended)</option>
+                            <option value="eco_lodge">🌿 Eco Lodge</option>
+                            <option value="camping">⛺ Camping</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Nights</label>
+                        <input type="number" name="nights" value="3" min="1" max="30"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Food Preference</label>
+                        <select name="food"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500">
+                            <option value="non_vegetarian">🍖 Non-Vegetarian</option>
+                            <option value="mixed" selected>🍽️ Mixed</option>
+                            <option value="vegetarian">🥗 Vegetarian</option>
+                            <option value="vegan">🌱 Vegan</option>
+                            <option value="local_organic">🥬 Local Organic (Best)</option>
+                        </select>
+                    </div>
+                    <button type="submit"
+                        class="w-full py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all">Calculate
+                        Footprint</button>
+                </form>
+            </div>
+
+            {% if result %}
+            <div class="space-y-6">
+                <div class="glass rounded-2xl p-6 text-center">
+                    <h3 class="text-sm text-gray-400 mb-2">Total Carbon Footprint</h3>
+                    <div class="text-5xl font-bold text-cyan-400 mb-2">{{ result.total_emissions_kg }} kg</div>
+                    <p class="text-gray-400">CO₂ equivalent</p>
+                    <div class="mt-4 flex justify-center items-center gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-eco-400">{{ result.eco_score }}/10</div>
+                            <div class="text-xs text-gray-400">Eco Score</div>
+                        </div>
+                        <div class="w-px h-12 bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-amber-400">{{ result.trees_to_offset }}</div>
+                            <div class="text-xs text-gray-400">Trees to Offset</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="font-display text-lg font-bold mb-4">Breakdown</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>Transport</span><span
+                                    class="text-cyan-400">{{ result.transport.emissions_kg }} kg ({{
+                                    result.breakdown.transport_percent }}%)</span></div>
+                            <div class="h-2 bg-slate-700 rounded-full">
+                                <div class="h-full bg-cyan-500 rounded-full"
+                                    style="width: {{ result.breakdown.transport_percent }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>Accommodation</span><span
+                                    class="text-purple-400">{{ result.accommodation.emissions_kg }} kg ({{
+                                    result.breakdown.accommodation_percent }}%)</span></div>
+                            <div class="h-2 bg-slate-700 rounded-full">
+                                <div class="h-full bg-purple-500 rounded-full"
+                                    style="width: {{ result.breakdown.accommodation_percent }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>Food</span><span
+                                    class="text-amber-400">{{ result.food.emissions_kg }} kg ({{
+                                    result.breakdown.food_percent }}%)</span></div>
+                            <div class="h-2 bg-slate-700 rounded-full">
+                                <div class="h-full bg-amber-500 rounded-full"
+                                    style="width: {{ result.breakdown.food_percent }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="font-display text-lg font-bold mb-4">🌿 Greener Alternatives</h3>
+                    {% if result.transport.greener_alternatives %}
+                    <div class="mb-4">
+                        <h4 class="text-sm text-gray-400 mb-2">Better Transport Options:</h4>
+                        {% for alt in result.transport.greener_alternatives[:2] %}
+                        <div class="flex justify-between items-center bg-eco-500/10 rounded-lg p-3 mb-2">
+                            <span>{{ alt.mode }}</span>
+                            <span class="text-eco-400 text-sm">Save {{ alt.savings }} kg ({{ alt.savings_percent
+                                }}%)</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if result.accommodation.greener_alternatives %}
+                    <div>
+                        <h4 class="text-sm text-gray-400 mb-2">Better Stay Options:</h4>
+                        {% for alt in result.accommodation.greener_alternatives[:2] %}
+                        <div class="flex justify-between items-center bg-eco-500/10 rounded-lg p-3 mb-2">
+                            <span>{{ alt.type }}</span>
+                            <span class="text-eco-400 text-sm">Save {{ alt.savings }} kg ({{ alt.savings_percent
+                                }}%)</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+                <div class="w-24 h-24 bg-cyan-500/20 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="font-display text-xl font-bold mb-2">Calculate Your Impact</h3>
+                <p class="text-gray-400">Fill in the form to see your carbon footprint and eco-friendly alternatives</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-12 glass rounded-2xl p-6">
+            <h2 class="font-display text-xl font-bold mb-4">ISO 14001 Alignment</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for key, value in iso_points.items() %}
+                <div class="bg-slate-800/50 rounded-lg p-4">
+                    <h4 class="font-medium text-eco-400 mb-1">{{ key|replace('_', ' ')|title }}</h4>
+                    <p class="text-sm text-gray-400">{{ value }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

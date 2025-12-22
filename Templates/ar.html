@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block title %}AR Cultural Experience - EcoJourney{% endblock %}
+{% block extra_head %}
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<style>
+    .ar-container {
+        position: relative;
+        width: 100%;
+        height: 70vh;
+        background: #000;
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .ar-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+        z-index: 10;
+    }
+
+    #ar-instructions {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 20;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-900 py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center px-4 py-2 rounded-full glass text-sm mb-4">
+                <span class="w-2 h-2 bg-rose-400 rounded-full mr-2 animate-pulse"></span>
+                <span class="text-rose-300">WebAR Experience</span>
+            </div>
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">Augmented Reality <span
+                    class="gradient-text">Cultural Engagement</span></h1>
+            <p class="text-gray-400 text-lg">Point your camera at AR markers to discover cultural heritage and
+                sustainability tips</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 mb-12">
+            <div class="lg:col-span-2">
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="font-display text-xl font-bold mb-4 flex items-center gap-2">📱 How to Use AR</h2>
+                    <ol class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span
+                                class="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</span>
+                            <div>
+                                <h4 class="font-semibold">Print or Display AR Marker</h4>
+                                <p class="text-sm text-gray-400">Download and print the Hiro marker below, or display it
+                                    on another screen</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span
+                                class="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</span>
+                            <div>
+                                <h4 class="font-semibold">Launch AR Camera</h4>
+                                <p class="text-sm text-gray-400">Click the "Start AR Experience" button and allow camera
+                                    access</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span
+                                class="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</span>
+                            <div>
+                                <h4 class="font-semibold">Point at Marker</h4>
+                                <p class="text-sm text-gray-400">Point your camera at the marker to see 3D cultural
+                                    content and eco-tips</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="glass rounded-2xl p-6 mt-6">
+                    <h2 class="font-display text-xl font-bold mb-4">🎯 AR Marker</h2>
+                    <p class="text-gray-400 text-sm mb-4">Print this Hiro marker or display on another device. Point
+                        your camera at it to activate AR.</p>
+                    <div class="bg-white p-4 rounded-xl inline-block">
+                        <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
+                            alt="Hiro AR Marker" class="w-48 h-48">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Standard Hiro marker - works with AR.js</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div
+                    class="bg-gradient-to-br from-rose-500/20 to-purple-500/20 rounded-2xl p-6 border border-rose-500/30">
+                    <h3 class="font-display text-lg font-bold mb-4">🚀 Launch AR</h3>
+                    <p class="text-sm text-gray-300 mb-4">Open the AR camera to experience cultural heritage in
+                        augmented reality.</p>
+                    <a href="/ar/camera"
+                        class="block w-full text-center py-3 bg-rose-500 rounded-xl font-semibold hover:bg-rose-600 transition-all"
+                        id="launch-ar-btn">Start AR Experience</a>
+                    <p class="text-xs text-gray-400 mt-2 text-center">Requires camera permission</p>
+                </div>
+
+                <div class="glass rounded-xl p-6">
+                    <h3 class="font-display text-lg font-bold mb-4">📍 AR-Enabled Sites</h3>
+                    <div class="space-y-3">
+                        {% for dest in destinations[:5] %}
+                        <div class="bg-slate-800/50 rounded-lg p-3">
+                            <h4 class="font-medium text-sm">{{ dest.name }}</h4>
+                            <p class="text-xs text-gray-400 mt-1 line-clamp-2">{{ dest.cultural_info[:60] }}...</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="glass rounded-xl p-6">
+                    <h3 class="font-display text-lg font-bold mb-4">🌿 Why AR for Sustainability?</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li class="flex items-start gap-2"><span class="text-eco-400">✓</span><span>Reduces need for
+                                printed materials</span></li>
+                        <li class="flex items-start gap-2"><span class="text-eco-400">✓</span><span>Delivers eco-tips at
+                                cultural sites</span></li>
+                        <li class="flex items-start gap-2"><span class="text-eco-400">✓</span><span>Enhances cultural
+                                understanding</span></li>
+                        <li class="flex items-start gap-2"><span class="text-eco-400">✓</span><span>No app installation
+                                required</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+            <h2 class="font-display text-xl font-bold mb-6">Cultural Heritage Information</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for dest in destinations %}
+                <div class="bg-slate-800/50 rounded-xl p-5">
+                    <h3 class="font-semibold mb-2">{{ dest.name }}</h3>
+                    <p class="text-sm text-gray-300 mb-3">{{ dest.cultural_info }}</p>
+                    <div class="p-3 bg-eco-500/10 border border-eco-500/30 rounded-lg">
+                        <span class="text-xs text-eco-400 font-medium">🌿 Eco Tip:</span>
+                        <p class="text-xs text-gray-400 mt-1">{{ dest.eco_tips }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('launch-ar-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const arWindow = window.open('', 'AR Experience', 'width=800,height=600');
+        arWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>EcoJourney AR Experience</title>
+            <script src="https://aframe.io/releases/1.4.0/aframe.min.js"><\/script>
+            <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"><\/script>
+            <style>
+                body { margin: 0; overflow: hidden; }
+                .info-panel {
+                    position: fixed; bottom: 20px; left: 20px; right: 20px;
+                    background: rgba(0,0,0,0.8); color: white; padding: 15px;
+                    border-radius: 10px; font-family: sans-serif; z-index: 1000;
+                }
+            </style>
+        </head>
+        <body style="margin:0; overflow:hidden;">
+            <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+                <a-marker preset="hiro">
+                    <a-box position="0 0.5 0" material="color: #22c55e; opacity: 0.8" scale="1 1 1">
+                        <a-animation attribute="rotation" dur="5000" fill="forwards" to="0 360 0" repeat="indefinite"></a-animation>
+                    </a-box>
+                    <a-text value="Welcome to EcoJourney!" position="0 1.5 0" align="center" color="#22c55e" scale="0.5 0.5 0.5"></a-text>
+                    <a-text value="Sustainable Tourism" position="0 1.2 0" align="center" color="#ffffff" scale="0.3 0.3 0.3"></a-text>
+                    <a-entity position="0 2 0">
+                        <a-text value="🌿 Eco Tip:" position="0 0 0" align="center" color="#4ade80" scale="0.3 0.3 0.3"></a-text>
+                        <a-text value="Respect local cultures" position="0 -0.2 0" align="center" color="#ffffff" scale="0.25 0.25 0.25"></a-text>
+                        <a-text value="and minimize your footprint" position="0 -0.4 0" align="center" color="#ffffff" scale="0.25 0.25 0.25"></a-text>
+                    </a-entity>
+                </a-marker>
+                <a-entity camera></a-entity>
+            </a-scene>
+            <div class="info-panel">
+                <strong style="color: #22c55e;">📱 Point camera at the Hiro marker</strong>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #ccc;">A 3D eco-tourism experience will appear on the marker</p>
+            </div>
+        </body>
+        </html>
+    `);
+    });
+</script>
+{% endblock %}

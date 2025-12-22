@@ -1,0 +1,579 @@
+{% extends 'base.html' %}
+
+{% block title %}Travel Planner - EcoJourney{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-900 py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {% if step == 'form' %}
+        <!-- Multi-Step Form -->
+        <div class="text-center mb-12">
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">
+                Plan Your <span class="gradient-text">Eco Journey</span>
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Tell us about your preferences and we'll recommend sustainable destinations
+            </p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="flex justify-between items-center mb-12 max-w-2xl mx-auto">
+            <div class="flex flex-col items-center" id="step-indicator-1">
+                <div class="w-10 h-10 rounded-full bg-eco-500 flex items-center justify-center text-white font-bold">1
+                </div>
+                <span class="text-xs mt-2 text-eco-400">Budget</span>
+            </div>
+            <div class="flex-1 h-1 bg-slate-700 mx-2" id="progress-1-2">
+                <div class="h-full bg-eco-500 transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="flex flex-col items-center" id="step-indicator-2">
+                <div
+                    class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-400 font-bold">
+                    2</div>
+                <span class="text-xs mt-2 text-gray-500">Type</span>
+            </div>
+            <div class="flex-1 h-1 bg-slate-700 mx-2" id="progress-2-3">
+                <div class="h-full bg-eco-500 transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="flex flex-col items-center" id="step-indicator-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-400 font-bold">
+                    3</div>
+                <span class="text-xs mt-2 text-gray-500">Duration</span>
+            </div>
+            <div class="flex-1 h-1 bg-slate-700 mx-2" id="progress-3-4">
+                <div class="h-full bg-eco-500 transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="flex flex-col items-center" id="step-indicator-4">
+                <div
+                    class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-400 font-bold">
+                    4</div>
+                <span class="text-xs mt-2 text-gray-500">Eco Pref</span>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <form method="POST" action="/planner" id="planner-form" class="glass rounded-2xl p-8">
+            <!-- Step 1: Budget -->
+            <div id="step-1" class="step-content">
+                <h2 class="font-display text-2xl font-bold mb-2">What's your budget?</h2>
+                <p class="text-gray-400 mb-6">Choose your comfort level - sustainable options are available at every
+                    price point</p>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <label class="budget-option cursor-pointer">
+                        <input type="radio" name="budget" value="low" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">💰</div>
+                            <h3 class="font-bold text-lg">Budget</h3>
+                            <p class="text-gray-400 text-sm mt-1">Under ₹15,000/day</p>
+                            <div class="mt-3 text-xs text-eco-400">
+                                🌿 Great for homestays
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="budget-option cursor-pointer">
+                        <input type="radio" name="budget" value="medium" class="hidden" checked>
+                        <div
+                            class="p-6 rounded-xl border-2 border-eco-500 hover:border-eco-400 transition-all text-center bg-eco-500/10">
+                            <div class="text-3xl mb-2">💎</div>
+                            <h3 class="font-bold text-lg">Moderate</h3>
+                            <p class="text-gray-400 text-sm mt-1">₹15,000 - ₹35,000/day</p>
+                            <div class="mt-3 text-xs text-eco-400">
+                                🌿 Eco-certified hotels
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="budget-option cursor-pointer">
+                        <input type="radio" name="budget" value="high" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">👑</div>
+                            <h3 class="font-bold text-lg">Premium</h3>
+                            <p class="text-gray-400 text-sm mt-1">Above ₹35,000/day</p>
+                            <div class="mt-3 text-xs text-eco-400">
+                                🌿 Luxury eco-resorts
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button type="button" onclick="nextStep(2)"
+                        class="px-8 py-3 bg-eco-500 rounded-xl font-semibold hover:bg-eco-600 transition-all">
+                        Next Step →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Travel Type -->
+            <div id="step-2" class="step-content hidden">
+                <h2 class="font-display text-2xl font-bold mb-2">What type of experience?</h2>
+                <p class="text-gray-400 mb-6">Each type offers unique sustainable travel opportunities</p>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <label class="type-option cursor-pointer">
+                        <input type="radio" name="travel_type" value="nature" class="hidden" checked>
+                        <div
+                            class="p-6 rounded-xl border-2 border-eco-500 hover:border-eco-400 transition-all text-center bg-eco-500/10">
+                            <div class="text-3xl mb-2">🌲</div>
+                            <h3 class="font-bold">Nature</h3>
+                            <p class="text-gray-400 text-xs mt-1">Forests, wildlife, scenic</p>
+                        </div>
+                    </label>
+
+                    <label class="type-option cursor-pointer">
+                        <input type="radio" name="travel_type" value="adventure" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">🏔️</div>
+                            <h3 class="font-bold">Adventure</h3>
+                            <p class="text-gray-400 text-xs mt-1">Trekking, rafting, sports</p>
+                        </div>
+                    </label>
+
+                    <label class="type-option cursor-pointer">
+                        <input type="radio" name="travel_type" value="spiritual" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">🕉️</div>
+                            <h3 class="font-bold">Spiritual</h3>
+                            <p class="text-gray-400 text-xs mt-1">Temples, yoga, meditation</p>
+                        </div>
+                    </label>
+
+                    <label class="type-option cursor-pointer">
+                        <input type="radio" name="travel_type" value="cultural" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">🏛️</div>
+                            <h3 class="font-bold">Cultural</h3>
+                            <p class="text-gray-400 text-xs mt-1">Heritage, history, arts</p>
+                        </div>
+                    </label>
+
+                    <label class="type-option cursor-pointer">
+                        <input type="radio" name="travel_type" value="beach" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">🏖️</div>
+                            <h3 class="font-bold">Beach</h3>
+                            <p class="text-gray-400 text-xs mt-1">Coast, islands, marine</p>
+                        </div>
+                    </label>
+
+                    <label class="type-option cursor-pointer">
+                        <input type="radio" name="travel_type" value="relaxation" class="hidden">
+                        <div
+                            class="p-6 rounded-xl border-2 border-slate-700 hover:border-eco-500 transition-all text-center">
+                            <div class="text-3xl mb-2">🧘</div>
+                            <h3 class="font-bold">Relaxation</h3>
+                            <p class="text-gray-400 text-xs mt-1">Spa, wellness, retreat</p>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button type="button" onclick="prevStep(1)"
+                        class="px-8 py-3 glass rounded-xl font-semibold hover:bg-white/20 transition-all">
+                        ← Back
+                    </button>
+                    <button type="button" onclick="nextStep(3)"
+                        class="px-8 py-3 bg-eco-500 rounded-xl font-semibold hover:bg-eco-600 transition-all">
+                        Next Step →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Duration -->
+            <div id="step-3" class="step-content hidden">
+                <h2 class="font-display text-2xl font-bold mb-2">How long is your trip?</h2>
+                <p class="text-gray-400 mb-6">Longer stays often have lower daily carbon footprint per experience</p>
+
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400">Trip Duration</span>
+                        <span class="font-bold text-eco-400" id="duration-display">5 days</span>
+                    </div>
+                    <input type="range" name="duration" min="2" max="14" value="5"
+                        class="w-full h-3 rounded-full appearance-none bg-slate-700 cursor-pointer" id="duration-slider"
+                        oninput="updateDuration(this.value)">
+                    <div class="flex justify-between text-xs text-gray-500 mt-2">
+                        <span>2 days</span>
+                        <span>1 week</span>
+                        <span>2 weeks</span>
+                    </div>
+                </div>
+
+                <!-- Eco Nudge -->
+                <div class="p-4 bg-eco-500/10 border border-eco-500/30 rounded-xl mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="text-2xl">💡</div>
+                        <div>
+                            <h4 class="font-semibold text-eco-400">Sustainability Tip</h4>
+                            <p class="text-sm text-gray-400" id="duration-tip">
+                                A 5-day trip allows for deeper cultural immersion with moderate travel emissions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button type="button" onclick="prevStep(2)"
+                        class="px-8 py-3 glass rounded-xl font-semibold hover:bg-white/20 transition-all">
+                        ← Back
+                    </button>
+                    <button type="button" onclick="nextStep(4)"
+                        class="px-8 py-3 bg-eco-500 rounded-xl font-semibold hover:bg-eco-600 transition-all">
+                        Next Step →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Sustainability Preference -->
+            <div id="step-4" class="step-content hidden">
+                <h2 class="font-display text-2xl font-bold mb-2">How eco-conscious are you?</h2>
+                <p class="text-gray-400 mb-6">Help us match you with destinations that align with your values</p>
+
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400">Sustainability Priority</span>
+                        <span class="font-bold text-eco-400" id="eco-display">7/10</span>
+                    </div>
+                    <input type="range" name="sustainability" min="1" max="10" value="7"
+                        class="w-full h-3 rounded-full appearance-none bg-slate-700 cursor-pointer" id="eco-slider"
+                        oninput="updateEco(this.value)">
+                    <div class="flex justify-between text-xs text-gray-500 mt-2">
+                        <span>Flexible</span>
+                        <span>Balanced</span>
+                        <span>Eco-First</span>
+                    </div>
+                </div>
+
+                <!-- Eco Level Description -->
+                <div class="p-4 glass rounded-xl mb-6" id="eco-description">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-eco-500/20 rounded-full flex items-center justify-center text-2xl">🌿
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Eco-Conscious Traveler</h4>
+                            <p class="text-sm text-gray-400">Prioritizes sustainable accommodations and low-carbon
+                                transport</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="p-4 bg-slate-800 rounded-xl mb-6">
+                    <h4 class="font-semibold mb-3">Your Travel Profile</h4>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-400">Budget:</span>
+                            <span class="ml-2 font-medium" id="summary-budget">Moderate</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Type:</span>
+                            <span class="ml-2 font-medium" id="summary-type">Nature</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Duration:</span>
+                            <span class="ml-2 font-medium" id="summary-duration">5 days</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Eco Priority:</span>
+                            <span class="ml-2 font-medium text-eco-400" id="summary-eco">7/10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button type="button" onclick="prevStep(3)"
+                        class="px-8 py-3 glass rounded-xl font-semibold hover:bg-white/20 transition-all">
+                        ← Back
+                    </button>
+                    <button type="submit"
+                        class="px-8 py-3 bg-gradient-to-r from-eco-500 to-teal-500 rounded-xl font-semibold hover:from-eco-600 hover:to-teal-600 transition-all flex items-center gap-2">
+                        <span>Get Recommendations</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        {% else %}
+        <!-- Results -->
+        <div class="text-center mb-12">
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">
+                Your <span class="gradient-text">Eco Recommendations</span>
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Based on your preferences, here are the best sustainable destinations for you
+            </p>
+
+            <!-- Search Summary -->
+            <div class="flex flex-wrap justify-center gap-3 mt-6">
+                <span class="px-4 py-2 glass rounded-full text-sm">
+                    💰 {{ search_params.budget|capitalize }} Budget
+                </span>
+                <span class="px-4 py-2 glass rounded-full text-sm">
+                    🎯 {{ search_params.travel_type|capitalize }}
+                </span>
+                <span class="px-4 py-2 glass rounded-full text-sm">
+                    📅 {{ search_params.duration }} Days
+                </span>
+                <span class="px-4 py-2 glass rounded-full text-sm">
+                    🌿 Eco {{ search_params.sustainability }}/10
+                </span>
+            </div>
+        </div>
+
+        <!-- Recommendation Cards -->
+        <div class="space-y-6">
+            {% for rec in recommendations %}
+            <div class="glass rounded-2xl p-6 card-hover">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Left: Image Placeholder -->
+                    <div
+                        class="w-full md:w-48 h-36 bg-gradient-to-br from-eco-600/30 to-teal-600/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-12 h-12 text-eco-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- Right: Content -->
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-start justify-between gap-4 mb-3">
+                            <div>
+                                <h3 class="font-display text-xl font-bold">{{ rec.name }}</h3>
+                                <p class="text-gray-400 text-sm">{{ rec.distance }} km from Delhi</p>
+                            </div>
+                            <!-- Match Score -->
+                            <div class="flex items-center gap-2">
+                                <div class="text-right">
+                                    <div class="text-xs text-gray-400">Match Score</div>
+                                    <div class="font-bold text-eco-400">{{ rec.score }}/100</div>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-eco-500/20 flex items-center justify-center">
+                                    <span class="text-eco-400 font-bold">{{ rec.eco_score }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-300 text-sm mb-4">{{ rec.description }}</p>
+
+                        <!-- Match Reasons -->
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            {% for reason in rec.match_reasons %}
+                            <span
+                                class="px-3 py-1 bg-eco-500/20 text-eco-400 rounded-full text-xs flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                {{ reason }}
+                            </span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Sustainability Features -->
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            {% for feature in rec.sustainability_features[:2] %}
+                            <span class="px-3 py-1 bg-slate-700 text-gray-300 rounded-lg text-xs">
+                                🌱 {{ feature }}
+                            </span>
+                            {% endfor %}
+                            <span class="px-3 py-1 bg-slate-700 text-gray-300 rounded-lg text-xs">
+                                🚗 {{ rec.carbon_rating|capitalize }} Carbon
+                            </span>
+                        </div>
+
+                        <a href="/itinerary/{{ rec.id }}"
+                            class="inline-flex items-center px-6 py-2 bg-eco-500 rounded-lg font-medium hover:bg-eco-600 transition-all">
+                            <span>View Itinerary</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- New Search Button -->
+        <div class="text-center mt-10">
+            <a href="/planner"
+                class="inline-flex items-center px-6 py-3 glass rounded-xl font-medium hover:bg-white/20 transition-all">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+                <span>Start New Search</span>
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let currentStep = 1;
+
+    function nextStep(step) {
+        document.getElementById(`step-${currentStep}`).classList.add('hidden');
+        document.getElementById(`step-${step}`).classList.remove('hidden');
+        updateProgressIndicators(step);
+        currentStep = step;
+        updateSummary();
+    }
+
+    function prevStep(step) {
+        document.getElementById(`step-${currentStep}`).classList.add('hidden');
+        document.getElementById(`step-${step}`).classList.remove('hidden');
+        updateProgressIndicators(step);
+        currentStep = step;
+    }
+
+    function updateProgressIndicators(step) {
+        for (let i = 1; i <= 4; i++) {
+            const indicator = document.getElementById(`step-indicator-${i}`);
+            const circle = indicator.querySelector('div');
+            const label = indicator.querySelector('span');
+
+            if (i < step) {
+                circle.className = 'w-10 h-10 rounded-full bg-eco-500 flex items-center justify-center text-white font-bold';
+                label.className = 'text-xs mt-2 text-eco-400';
+            } else if (i === step) {
+                circle.className = 'w-10 h-10 rounded-full bg-eco-500 flex items-center justify-center text-white font-bold';
+                label.className = 'text-xs mt-2 text-eco-400';
+            } else {
+                circle.className = 'w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-400 font-bold';
+                label.className = 'text-xs mt-2 text-gray-500';
+            }
+        }
+
+        // Update progress bars
+        for (let i = 1; i < 4; i++) {
+            const progress = document.querySelector(`#progress-${i}-${i + 1} div`);
+            if (i < step) {
+                progress.style.width = '100%';
+            } else {
+                progress.style.width = '0%';
+            }
+        }
+    }
+
+    function updateDuration(value) {
+        document.getElementById('duration-display').textContent = value + ' days';
+        const tip = document.getElementById('duration-tip');
+
+        if (value <= 3) {
+            tip.textContent = 'Short trips work best for nearby destinations to minimize travel emissions.';
+        } else if (value <= 5) {
+            tip.textContent = 'A ' + value + '-day trip allows for deeper cultural immersion with moderate travel emissions.';
+        } else if (value <= 7) {
+            tip.textContent = 'A week-long trip spreads travel emissions across more experiences, improving per-day sustainability.';
+        } else {
+            tip.textContent = 'Extended stays are the most sustainable option - longer immersion, lower per-day carbon footprint!';
+        }
+    }
+
+    function updateEco(value) {
+        document.getElementById('eco-display').textContent = value + '/10';
+        const desc = document.getElementById('eco-description');
+
+        let icon, title, text;
+        if (value <= 3) {
+            icon = '🌍'; title = 'Casual Traveler';
+            text = 'Open to all options, will consider eco-friendly when convenient';
+        } else if (value <= 5) {
+            icon = '🌱'; title = 'Eco-Aware Traveler';
+            text = 'Balances convenience with sustainability considerations';
+        } else if (value <= 7) {
+            icon = '🌿'; title = 'Eco-Conscious Traveler';
+            text = 'Prioritizes sustainable accommodations and low-carbon transport';
+        } else {
+            icon = '🌳'; title = 'Eco-Champion';
+            text = 'Fully committed to minimizing environmental impact across all choices';
+        }
+
+        desc.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-eco-500/20 rounded-full flex items-center justify-center text-2xl">${icon}</div>
+                <div>
+                    <h4 class="font-semibold">${title}</h4>
+                    <p class="text-sm text-gray-400">${text}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function updateSummary() {
+        const budget = document.querySelector('input[name="budget"]:checked');
+        const type = document.querySelector('input[name="travel_type"]:checked');
+        const duration = document.getElementById('duration-slider').value;
+        const eco = document.getElementById('eco-slider').value;
+
+        if (budget) {
+            document.getElementById('summary-budget').textContent = budget.value.charAt(0).toUpperCase() + budget.value.slice(1);
+        }
+        if (type) {
+            document.getElementById('summary-type').textContent = type.value.charAt(0).toUpperCase() + type.value.slice(1);
+        }
+        document.getElementById('summary-duration').textContent = duration + ' days';
+        document.getElementById('summary-eco').textContent = eco + '/10';
+    }
+
+    // Radio button styling
+    document.querySelectorAll('.budget-option input, .type-option input').forEach(input => {
+        input.addEventListener('change', function () {
+            const siblings = this.closest('.grid').querySelectorAll('label > div');
+            siblings.forEach(div => {
+                div.classList.remove('border-eco-500', 'bg-eco-500/10');
+                div.classList.add('border-slate-700');
+            });
+            this.nextElementSibling.classList.remove('border-slate-700');
+            this.nextElementSibling.classList.add('border-eco-500', 'bg-eco-500/10');
+        });
+    });
+
+    // Custom range slider styling
+    const style = document.createElement('style');
+    style.textContent = `
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #22c55e, #14b8a6);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #22c55e, #14b8a6);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

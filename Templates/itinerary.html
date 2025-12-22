@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}{{ itinerary.destination }} Itinerary - EcoJourney{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-slate-900 py-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center px-4 py-2 rounded-full glass text-sm mb-4">
+                <span class="w-2 h-2 bg-eco-400 rounded-full mr-2"></span>
+                <span class="text-eco-300">Personalized Itinerary</span>
+            </div>
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">{{ itinerary.destination }}</h1>
+            <p class="text-gray-400 text-lg">{{ itinerary.duration }}-day sustainable travel experience</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div class="glass rounded-xl p-4 text-center">
+                <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-eco-500/20 flex items-center justify-center">
+                    <span class="text-2xl font-bold text-eco-400">{{ itinerary.eco_score }}</span>
+                </div>
+                <p class="text-sm text-gray-400">Eco Score</p>
+            </div>
+            <div class="glass rounded-xl p-4 text-center">
+                <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                    <span class="text-2xl font-bold text-cyan-400">{{ itinerary.duration }}</span>
+                </div>
+                <p class="text-sm text-gray-400">Days</p>
+            </div>
+            <div class="glass rounded-xl p-4 text-center">
+                <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <span class="text-xl">🏡</span>
+                </div>
+                <p class="text-sm text-gray-400">{{ itinerary.accommodation_type }}</p>
+            </div>
+            <div class="glass rounded-xl p-4 text-center">
+                <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-amber-500/20 flex items-center justify-center">
+                    <span class="text-xl">🌿</span>
+                </div>
+                <p class="text-sm text-gray-400">{{ carbon_info.carbon_rating|capitalize }} Carbon</p>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <h2 class="font-display text-2xl font-bold mb-6">Day-by-Day Plan</h2>
+                <div class="space-y-4">
+                    {% for day in itinerary.days %}
+                    <div class="glass rounded-xl p-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div
+                                class="w-12 h-12 bg-gradient-to-br from-eco-500 to-teal-500 rounded-full flex items-center justify-center font-bold text-lg">
+                                {{ day.day }}</div>
+                            <div>
+                                <h3 class="font-semibold">Day {{ day.day }}</h3>
+                                <p class="text-sm text-gray-400">{% if day.day == 1 %}Arrival{% elif day.day ==
+                                    itinerary.duration %}Departure{% else %}Exploration{% endif %}</p>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 mb-4">
+                            <div class="bg-slate-800/50 rounded-lg p-3">
+                                <div class="flex items-center gap-2 text-sm text-gray-400 mb-1">
+                                    <span>🌅</span><span>Morning</span></div>
+                                <p class="text-sm">{{ day.morning }}</p>
+                            </div>
+                            <div class="bg-slate-800/50 rounded-lg p-3">
+                                <div class="flex items-center gap-2 text-sm text-gray-400 mb-1">
+                                    <span>☀️</span><span>Afternoon</span></div>
+                                <p class="text-sm">{{ day.afternoon }}</p>
+                            </div>
+                            <div class="bg-slate-800/50 rounded-lg p-3">
+                                <div class="flex items-center gap-2 text-sm text-gray-400 mb-1">
+                                    <span>🌙</span><span>Evening</span></div>
+                                <p class="text-sm">{{ day.evening }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2 p-3 bg-eco-500/10 border border-eco-500/30 rounded-lg">
+                            <span class="text-lg">💡</span>
+                            <div><span class="text-xs text-eco-400 font-medium">Eco Tip</span>
+                                <p class="text-sm text-gray-300">{{ day.eco_tip }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="glass rounded-xl p-6">
+                    <h3 class="font-display text-lg font-bold mb-4">🏡 Recommended Stay</h3>
+                    <div class="bg-slate-800/50 rounded-lg p-4 mb-4">
+                        <h4 class="font-medium">{{ itinerary.accommodation }}</h4>
+                        <p class="text-sm text-gray-400 mt-1">{{ itinerary.accommodation_type }}</p>
+                        <span
+                            class="inline-block mt-2 px-2 py-1 bg-eco-500/20 text-eco-400 rounded text-xs">Eco-Certified</span>
+                    </div>
+                </div>
+
+                <div class="glass rounded-xl p-6">
+                    <h3 class="font-display text-lg font-bold mb-4">👨‍🏫 Local Guide</h3>
+                    <div class="bg-slate-800/50 rounded-lg p-4">
+                        <h4 class="font-medium">{{ itinerary.local_guide }}</h4>
+                        <p class="text-sm text-gray-400 mt-1">Community-certified</p>
+                        <span
+                            class="inline-block mt-2 px-2 py-1 bg-amber-500/20 text-amber-400 rounded text-xs">Supports
+                            Local Economy</span>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-gradient-to-br from-rose-500/20 to-purple-500/20 rounded-xl p-6 border border-rose-500/30">
+                    <h3 class="font-display text-lg font-bold mb-2">📱 AR Experience</h3>
+                    <p class="text-sm text-gray-300 mb-4">Explore cultural sites with Augmented Reality.</p>
+                    <a href="/ar"
+                        class="block w-full text-center py-2 bg-rose-500 rounded-lg font-medium hover:bg-rose-600 transition-all">Launch
+                        AR →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 glass rounded-2xl p-8 text-center">
+            <h2 class="font-display text-2xl font-bold mb-4">Calculate Your Trip's Carbon Footprint</h2>
+            <p class="text-gray-400 mb-6">Get detailed environmental impact analysis for this trip.</p>
+            <a href="/carbon"
+                class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl font-semibold hover:from-cyan-600 hover:to-teal-600 transition-all">Calculate
+                Carbon Impact</a>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="/planner" class="inline-flex items-center text-gray-400 hover:text-white transition-colors">← Back
+                to Recommendations</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
