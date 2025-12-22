@@ -10,7 +10,7 @@ from mysql.connector import Error
 SETUP_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'Hemanth@1105',
+    'password': 'Password',
     'port': 3306
 }
 
@@ -89,3 +89,4 @@ def setup_database():
 
 if __name__ == '__main__':
     setup_database()
+
