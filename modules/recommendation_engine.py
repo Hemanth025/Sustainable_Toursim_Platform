@@ -102,6 +102,9 @@ def generate_itinerary(destination_id, duration, budget, sustainability_pref):
     dest = DESTINATIONS[destination_id]
     itinerary = {
         "destination": dest["name"],
+        "destination_name": dest["name"], # Added for consistency with map flow
+        "dest_lat": dest.get("lat"),
+        "dest_lon": dest.get("lon"),
         "duration": duration,
         "eco_score": dest["eco_score"],
         "days": []

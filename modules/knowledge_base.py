@@ -15,6 +15,8 @@ DESTINATIONS = {
         "local_guides": ["Himalayan Eco Treks", "Green Valley Tours"],
         "homestays": ["Mountain View Homestay", "Eco Cottage Manali"],
         "distance_from_delhi": 540,
+        "lat": 32.2432,
+        "lon": 77.1892,
         "ar_content": {
             "cultural_info": "Ancient Hadimba Temple, built in 1553, showcases traditional Himalayan architecture",
             "eco_tips": "Carry reusable water bottles, avoid plastic bags, respect local wildlife"
@@ -32,6 +34,8 @@ DESTINATIONS = {
         "local_guides": ["Responsible Tourism Kerala", "Green Palm Tours"],
         "homestays": ["Coconut Lagoon Homestay", "Backwater Breeze Home"],
         "distance_from_delhi": 2200,
+        "lat": 9.4981,
+        "lon": 76.3388,
         "ar_content": {
             "cultural_info": "Traditional Kettuvallam houseboats made from eco-friendly jackwood and bamboo",
             "eco_tips": "Choose certified responsible tourism operators, avoid feeding wildlife"
@@ -49,6 +53,8 @@ DESTINATIONS = {
         "local_guides": ["Ganga Eco Adventures", "Spiritual Rishikesh Tours"],
         "homestays": ["Yoga Ashram Stay", "Riverside Eco Cottage"],
         "distance_from_delhi": 250,
+        "lat": 30.0869,
+        "lon": 78.2676,
         "ar_content": {
             "cultural_info": "Sacred Triveni Ghat where three holy rivers meet, center of Hindu spirituality",
             "eco_tips": "Participate in Ganga cleanup drives, use biodegradable products near the river"
@@ -66,6 +72,8 @@ DESTINATIONS = {
         "local_guides": ["Pink City Walks", "Rajasthan Heritage Tours"],
         "homestays": ["Haveli Heritage Home", "Royal Courtyard Stay"],
         "distance_from_delhi": 280,
+        "lat": 26.9124,
+        "lon": 75.7873,
         "ar_content": {
             "cultural_info": "Amber Fort, a UNESCO World Heritage site showcasing Rajput architecture from 1592",
             "eco_tips": "Support local artisans, choose heritage hotels that practice water recycling"
@@ -83,6 +91,8 @@ DESTINATIONS = {
         "local_guides": ["Coorg Eco Trails", "Plantation Discovery Tours"],
         "homestays": ["Coffee Blossom Homestay", "Misty Hills Cottage"],
         "distance_from_delhi": 2100,
+        "lat": 12.4244,
+        "lon": 75.7382,
         "ar_content": {
             "cultural_info": "Kodava culture with unique traditions, martial arts heritage and organic farming",
             "eco_tips": "Buy directly from local coffee farmers, avoid disturbing wildlife areas"
@@ -100,6 +110,8 @@ DESTINATIONS = {
         "local_guides": ["Ladakh Eco Tourism", "Himalayan Brotherhood"],
         "homestays": ["Leh View Homestay", "Nubra Valley Home"],
         "distance_from_delhi": 1000,
+        "lat": 34.1526,
+        "lon": 77.5771,
         "ar_content": {
             "cultural_info": "1000-year-old Buddhist monasteries preserving Tibetan Buddhism traditions",
             "eco_tips": "Acclimatize properly, carry out all waste, respect monastery rules"
@@ -117,6 +129,8 @@ DESTINATIONS = {
         "local_guides": ["Island Green Tours", "Coral Conservation Divers"],
         "homestays": ["Beachside Eco Hut", "Island Life Home"],
         "distance_from_delhi": 3500,
+        "lat": 11.6234,
+        "lon": 92.7265,
         "ar_content": {
             "cultural_info": "Cellular Jail, a symbol of India's freedom struggle and colonial history",
             "eco_tips": "Don't touch corals while snorkeling, use reef-safe sunscreen, avoid single-use plastic"
@@ -134,6 +148,8 @@ DESTINATIONS = {
         "local_guides": ["Varanasi Walks", "Spiritual Banaras Tours"],
         "homestays": ["Ghat View Home", "Old City Heritage Stay"],
         "distance_from_delhi": 800,
+        "lat": 25.3176,
+        "lon": 82.9739,
         "ar_content": {
             "cultural_info": "One of the oldest continuously inhabited cities, center of Hindu spirituality for 3000+ years",
             "eco_tips": "Support Ganga conservation, buy from local weavers, avoid contributing to ghat pollution"
@@ -151,6 +167,8 @@ DESTINATIONS = {
         "local_guides": ["Tea Trail Explorers", "Munnar Nature Walks"],
         "homestays": ["Tea Garden Cottage", "Hill View Homestay"],
         "distance_from_delhi": 2400,
+        "lat": 10.0889,
+        "lon": 77.0595,
         "ar_content": {
             "cultural_info": "Historic tea estates dating back to 1880s British colonial era",
             "eco_tips": "Buy certified organic tea, respect wildlife in sanctuaries, support tribal communities"

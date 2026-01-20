@@ -44,6 +44,12 @@ from modules.auth_module import (
     clear_remember_token,
     init_database
 )
+from modules.geospatial_service import GeospatialService
+from modules.ai_recommendation import AIRecommender
+
+# Initialize AI Recommender
+ai_recommender = None # Lazy init to ensure DESTINATIONS are loaded
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
@@ -54,6 +60,13 @@ try:
     init_database()
 except Exception as e:
     print(f"Database initialization skipped: {e}")
+
+# Initialize AI Model
+try:
+    ai_recommender = AIRecommender(DESTINATIONS)
+    print("AI Recommendation Engine Initialized")
+except Exception as e:
+    print(f"AI Engine Init Failed: {e}")
 
 
 # ==================== AUTHENTICATION ROUTES ====================
@@ -441,6 +454,11 @@ def itinerary(destination_id):
         params['sustainability']
     )
     
+    if itinerary_data:
+        # Ensure origin is set for distance calc (Default to Delhi if unknown)
+        itinerary_data['origin_lat'] = 28.6139
+        itinerary_data['origin_lon'] = 77.2090
+    
     if not itinerary_data:
         return render_template('error.html', message="Destination not found"), 404
     
@@ -605,6 +623,22 @@ def api_pricing(destination_id):
     return jsonify(analysis)
 
 
+@app.route('/api/ai-recommend', methods=['POST'])
+def api_ai_recommend():
+    """API endpoint for AI-based recommendations"""
+    data = request.get_json()
+    query = data.get('query', '')
+    
+    if not query:
+        return jsonify([])
+        
+    if ai_recommender:
+        results = ai_recommender.recommend(query)
+        return jsonify(results)
+    
+    return jsonify([])
+
+
 @app.route('/api/destinations')
 def api_destinations():
     """API endpoint to list all destinations"""
@@ -618,6 +652,157 @@ def api_destinations():
             'budget_level': dest['budget_level']
         })
     return jsonify({'destinations': destinations})
+
+
+@app.route('/api/geocode', methods=['POST'])
+def api_geocode():
+    """Proxy for Nominatim geocoding"""
+    data = request.get_json()
+    query = data.get('query', '')
+    
+    if not query:
+        return jsonify([])
+        
+    results = GeospatialService.geocode_place(query)
+    return jsonify(results)
+
+
+@app.route('/api/nearby-places', methods=['POST'])
+def api_nearby_places():
+    """Proxy for Overpass API nearby places"""
+    data = request.get_json()
+    lat = float(data.get('lat', 0))
+    lon = float(data.get('lon', 0))
+    radius = int(data.get('radius', 5000))
+    place_type = data.get('type', 'all')
+    
+    places = GeospatialService.get_nearby_places(lat, lon, radius, place_type)
+    return jsonify(places)
+
+
+@app.route('/api/calculate-distance', methods=['POST'])
+def api_calculate_distance():
+    """Calculate distance and provide feedback"""
+    data = request.get_json()
+    lat1 = float(data.get('lat1', 0))
+    lon1 = float(data.get('lon1', 0))
+    lat2 = float(data.get('lat2', 0))
+    lon2 = float(data.get('lon2', 0))
+    
+    from modules.geospatial_service import haversine_distance
+    distance = haversine_distance(lat1, lon1, lat2, lon2)
+    recommendation = GeospatialService.get_trip_recommendation(distance)
+    
+    return jsonify({
+        'distance_km': round(distance, 2),
+        'recommendation': recommendation
+    })
+
+
+@app.route('/map')
+def map_page():
+    """Interactive Map Selection Page"""
+    return render_template('map.html')
+
+
+@app.route('/plan-custom')
+def plan_custom():
+    """Generate itinerary from map coordinates"""
+    destination_name = request.args.get('destination', 'Selected Location')
+    dest_lat = float(request.args.get('lat', 0))
+    dest_lon = float(request.args.get('lon', 0))
+    origin_lat = request.args.get('origin_lat')
+    origin_lon = request.args.get('origin_lon')
+    distance = request.args.get('distance')
+    
+    # Safe conversion of origin coordinates
+    try:
+        origin_lat = float(origin_lat) if origin_lat else 28.6139 # Default to Delhi
+        origin_lon = float(origin_lon) if origin_lon else 77.2090
+    except (ValueError, TypeError):
+        origin_lat = 28.6139
+        origin_lon = 77.2090
+
+    # Calculate distance if not provided
+    if not distance:
+        from modules.geospatial_service import haversine_distance
+        distance = haversine_distance(origin_lat, origin_lon, dest_lat, dest_lon)
+    
+    distance = float(distance) if distance else 500
+    
+    # Generate dynamic itinerary using nearby places
+    nearby = GeospatialService.get_nearby_places(dest_lat, dest_lon, radius=10000, place_type='all')
+    
+    # Create simple structure
+    itinerary_data = {
+        'destination_name': destination_name,
+        'dest_lat': dest_lat,
+        'dest_lon': dest_lon,
+        'origin_lat': origin_lat,
+        'origin_lon': origin_lon,
+        'duration': 3, # Default
+        'eco_score': 8, # Optimistic default
+        'overview': f"Sustainable trip to {destination_name}. Explore {len(nearby)} nearby eco-spots.",
+        'days': []
+    }
+    
+    # Fill days with nearby places
+    current_day = 1
+    day_activities = []
+    
+    # Group places for variety
+    temples = [p for p in nearby if p['category'] == 'temple']
+    nature = [p for p in nearby if p['category'] == 'park' or p['category'] == 'mountain']
+    culture = [p for p in nearby if p['category'] == 'cultural']
+    beaches = [p for p in nearby if p['category'] == 'beach']
+    
+    all_places = temples + nature + culture + beaches
+    
+    # Simple distribution logic
+    for i in range(3):
+        activities = []
+        if i == 0:
+            activities.append({'time': 'Morning', 'activity': 'Arrival & Check-in', 'type': 'relax'})
+            if nature: activities.append({'time': 'Afternoon', 'activity': f"Visit {nature[0]['name']}", 'type': 'nature'})
+            elif all_places: activities.append({'time': 'Afternoon', 'activity': f"Visit {all_places[0]['name']}", 'type': 'explore'})
+        elif i == 1:
+            if temples: activities.append({'time': 'Morning', 'activity': f"Visit {temples[0]['name']}", 'type': 'spiritual'})
+            if culture: activities.append({'time': 'Afternoon', 'activity': f"Explore {culture[0]['name']}", 'type': 'culture'})
+            elif len(all_places) > 1: activities.append({'time': 'Afternoon', 'activity': f"Visit {all_places[1]['name']}", 'type': 'explore'})
+        else:
+            if beaches: activities.append({'time': 'Morning', 'activity': f"Relax at {beaches[0]['name']}", 'type': 'beach'})
+            activities.append({'time': 'Evening', 'activity': 'Departure', 'type': 'travel'})
+            
+        itinerary_data['days'].append({
+            'day': i + 1,
+            'activities': activities
+        })
+        
+    # Carbon info (mock for now based on distance)
+    carbon_info = {
+        'total': int(distance * 0.15), # approx kg co2
+        'breakdown': {'transport': int(distance * 0.1), 'accommodation': 20, 'food': 10},
+        'comparison': '30% lower than average'
+    }
+    
+    pricing = {
+        'avg_cost': '₹5000 - ₹8000',
+        'season_status': 'Good time to visit'
+    }
+
+    # Hack: Inject into request context or template so it looks like a real destination
+    dest_obj = {
+        'name': destination_name,
+        'eco_score': 8,
+        'budget_level': 'Variable',
+        'best_season': []
+    }
+    
+    return render_template('itinerary.html',
+                         itinerary=itinerary_data,
+                         carbon_info=carbon_info,
+                         pricing_info=pricing,
+                         destination=dest_obj)
 
 
 # ==================== ERROR HANDLERS ====================

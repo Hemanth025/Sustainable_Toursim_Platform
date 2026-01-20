@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}EcoJourney - Map Explorer{% endblock %}
+
+{% block extra_head %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+<style>
+    /* Map Container */
+    #map {
+        height: caLc(100vh - 64px);
+        width: 100%;
+        z-index: 10;
+    }
+
+    /* Floating Panel */
+    .floating-panel {
+        position: absolute;
+        top: 80px;
+        left: 20px;
+        width: 380px;
+        z-index: 1000;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+
+    /* Bottom Panel */
+    .bottom-panel {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 800px;
+        z-index: 1000;
+        display: none;
+    }
+
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+    }
+
+    /* Marker Animation */
+    .marker-pulse {
+        animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+
+    @keyframes pulse-ring {
+        0% {
+            transform: scale(0.33);
+            opacity: 1;
+        }
+
+        80%,
+        100% {
+            transform: scale(1);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .floating-panel {
+            width: calc(100% - 40px);
+            left: 20px;
+            top: 74px;
+            max-height: 40vh;
+        }
+
+        .bottom-panel {
+            width: calc(100% - 40px);
+            bottom: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="relative w-full h-full overflow-hidden">
+    <!-- Map Element -->
+    <div id="map" class="bg-slate-900"></div>
+
+    <!-- Search & Filter Panel -->
+    <div class="floating-panel glass-dark rounded-2xl p-4 shadow-2xl border border-white/10 custom-scroll">
+        <h2 class="text-xl font-display font-bold text-white mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-eco-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                </path>
+            </svg>
+            Explore Destinations
+        </h2>
+
+        <!-- AI Recommendation Section -->
+        <div class="mb-6 relative">
+            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block flex justify-between">
+                <span>AI Assistant</span>
+                <span class="text-eco-400 text-[10px] border border-eco-500/30 px-1 rounded">BETA</span>
+            </label>
+            <div class="flex space-x-2">
+                <input type="text" id="ai-input"
+                    class="w-full bg-slate-800/50 text-white text-sm border border-slate-600 rounded-lg py-2 px-3 focus:ring-1 focus:ring-eco-500 outline-none"
+                    placeholder="Describe your ideal trip...">
+                <button id="ai-btn" class="bg-eco-600 hover:bg-eco-500 text-white rounded-lg px-3 transition-colors">
+                    ✨
+                </button>
+            </div>
+            <!-- AI Results -->
+            <div id="ai-results" class="mt-2 space-y-2 hidden"></div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="relative mb-6">
+            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Direct Search</label>
+            <input type="text" id="search-input"
+                class="w-full bg-slate-800/50 text-white border border-slate-600 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-eco-500 focus:border-transparent outline-none transition-all placeholder-gray-400"
+                placeholder="Search places (e.g. Manali)...">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-9" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <!-- Search Results Dropdown -->
+            <div id="search-results"
+                class="absolute w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-50 hidden max-h-60 overflow-y-auto custom-scroll">
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-6">
+            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 block">Discover
+                Nearby</label>
+            <div class="grid grid-cols-2 gap-2">
+                <button
+                    class="filter-btn active flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 border border-transparent hover:border-eco-500/30 transition-all text-sm group"
+                    data-type="beach">
+                    <span class="text-xl">🏖️</span>
+                    <span>Beaches</span>
+                </button>
+                <button
+                    class="filter-btn flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 border border-transparent hover:border-eco-500/30 transition-all text-sm group"
+                    data-type="mountain">
+                    <span class="text-xl">🏔️</span>
+                    <span>Mountains</span>
+                </button>
+                <button
+                    class="filter-btn flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 border border-transparent hover:border-eco-500/30 transition-all text-sm group"
+                    data-type="temple">
+                    <span class="text-xl">🕉️</span>
+                    <span>Temples</span>
+                </button>
+                <button
+                    class="filter-btn flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 border border-transparent hover:border-eco-500/30 transition-all text-sm group"
+                    data-type="park">
+                    <span class="text-xl">🌳</span>
+                    <span>Nature</span>
+                </button>
+                <button
+                    class="filter-btn col-span-2 flex items-center justify-center space-x-2 px-3 py-2 rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 border border-transparent hover:border-eco-500/30 transition-all text-sm group"
+                    data-type="cultural">
+                    <span class="text-xl">🏛️</span>
+                    <span>Culture & Heritage</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Radius Slider -->
+        <div class="mb-4">
+            <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Search Radius</label>
+                <span id="radius-value" class="text-eco-400 text-sm font-bold">5 km</span>
+            </div>
+            <input type="range" id="radius-slider" min="1" max="50" value="5"
+                class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-eco-500">
+        </div>
+
+        <!-- Instructions -->
+        <div class="mt-6 pt-6 border-t border-white/10">
+            <div class="flex items-start space-x-3 text-sm text-gray-400">
+                <svg class="w-5 h-5 text-eco-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p>Click anywhere on the map to explore nearby sustainable attractions. The AI will analyze the location
+                    for eco-friendly spots.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Destination Preview Panel -->
+    <div id="destination-panel"
+        class="bottom-panel glass-dark rounded-2xl p-6 shadow-2xl border border-white/10 transform transition-all duration-300 translate-y-full opacity-0">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-4">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-gradient-to-br from-eco-500 to-teal-600 flex items-center justify-center text-3xl shadow-lg shadow-eco-500/20">
+                    📍
+                </div>
+                <div>
+                    <h3 id="panel-title" class="text-2xl font-display font-bold text-white mb-1">Select a Location</h3>
+                    <p id="panel-coords" class="text-sm text-gray-400 font-mono">0.000, 0.000</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="flex space-x-8 border-l border-r border-white/10 px-8">
+                <div class="text-center">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Distance</p>
+                    <p id="panel-distance" class="text-xl font-bold text-white">-- km</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Nearby Spots</p>
+                    <p id="panel-spots" class="text-xl font-bold text-eco-400">0</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Sustainability</p>
+                    <div class="flex items-center justify-center space-x-1">
+                        <div class="w-2 h-2 rounded-full bg-eco-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-eco-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-eco-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex space-x-3 w-full md:w-auto">
+                <button id="close-panel"
+                    class="px-4 py-3 rounded-xl bg-slate-800 text-white font-medium hover:bg-slate-700 transition-all">
+                    Close
+                </button>
+                <button id="plan-trip-btn"
+                    class="flex-1 md:flex-none px-6 py-3 rounded-xl bg-gradient-to-r from-eco-600 to-teal-600 text-white font-bold shadow-lg shadow-eco-600/20 hover:from-eco-500 hover:to-teal-500 transition-all transform hover:-translate-y-1">
+                    Plan Trip Here
+                </button>
+            </div>
+        </div>
+
+        <!-- Sustainability Tip -->
+        <div id="eco-tip" class="mt-4 pt-4 border-t border-white/10 text-sm text-eco-300 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+            </svg>
+            <span id="eco-message">Calculate distance to see eco-travel advice.</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- Map Logic -->
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}
