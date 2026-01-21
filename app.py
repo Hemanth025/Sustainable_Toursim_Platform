@@ -42,8 +42,10 @@ from modules.auth_module import (
     set_remember_token,
     get_user_by_remember_token,
     clear_remember_token,
-    init_database
+    init_database,
+    get_user_details
 )
+from modules.user_module import get_user_history, add_user_history
 from modules.geospatial_service import GeospatialService
 from modules.ai_recommendation import AIRecommender
 
@@ -324,6 +326,17 @@ def logout():
     return response
 
 
+@app.route('/profile')
+@login_required
+def profile():
+    """User Profile Page"""
+    user_id = session.get('user_id')
+    user = get_user_details(user_id)
+    history = get_user_history(user_id)
+    
+    return render_template('profile.html', user=user, history=history)
+
+
 # ==================== API ENDPOINTS FOR AUTH ====================
 
 @app.route('/api/check-unique', methods=['POST'])
@@ -468,6 +481,11 @@ def itinerary(destination_id):
     # Get pricing info
     pricing_info = get_best_time_to_book(destination_id)
     
+    # Record history if logged in
+    if 'user_id' in session:
+        dest_name = DESTINATIONS.get(destination_id, {}).get('name', 'Unknown Destination')
+        add_user_history(session['user_id'], dest_name, destination_id)
+
     return render_template('itinerary.html',
                          itinerary=itinerary_data,
                          carbon_info=carbon_info,

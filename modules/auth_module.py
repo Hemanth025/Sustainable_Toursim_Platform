@@ -589,3 +589,30 @@ def get_current_user():
             'last_name': session.get('last_name')
         }
     return None
+
+
+def get_user_details(user_id):
+    """
+    Get full user details for profile page
+    """
+    connection = get_db_connection()
+    if not connection:
+        return None
+    
+    try:
+        cursor = connection.cursor(dictionary=True)
+        # Fetch all user fields except password and sensitive tokens
+        query = """
+        SELECT id, first_name, last_name, username, email, phone, is_verified, created_at
+        FROM users 
+        WHERE id = %s
+        """
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+    except Error as e:
+        print(f"Error fetching user details: {e}")
+        return None
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()

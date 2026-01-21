@@ -36,6 +36,21 @@ CREATE TABLE IF NOT EXISTS users (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 """
 
+# Create user history table SQL
+CREATE_HISTORY_TABLE = """
+CREATE TABLE IF NOT EXISTS user_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    destination_id VARCHAR(50) NOT NULL,
+    destination_name VARCHAR(100) NOT NULL,
+    search_type VARCHAR(20) DEFAULT 'view',
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_history (user_id),
+    INDEX idx_destination (destination_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+"""
+
 def setup_database():
     """Create database and users table"""
     connection = None
@@ -62,6 +77,12 @@ def setup_database():
             cursor.execute(CREATE_USERS_TABLE)
             connection.commit()
             print("[OK] Users table created/verified")
+            
+            # Create user history table
+            print("Creating 'user_history' table...")
+            cursor.execute(CREATE_HISTORY_TABLE)
+            connection.commit()
+            print("[OK] User history table created/verified")
             
             print("")
             print("=" * 50)
