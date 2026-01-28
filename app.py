@@ -630,6 +630,38 @@ def api_carbon():
     return jsonify(result)
 
 
+@app.route('/api/calculate-trip', methods=['POST'])
+def api_calculate_trip():
+    """Calculate distance between two locations"""
+    data = request.get_json()
+    origin = data.get('origin')
+    destination = data.get('destination')
+    
+    if not origin or not destination:
+        return jsonify({'error': 'Missing origin or destination'}), 400
+
+    # Geocode both
+    origin_locs = GeospatialService.geocode_place(origin)
+    dest_locs = GeospatialService.geocode_place(destination)
+    
+    if not origin_locs or not dest_locs:
+        return jsonify({'error': 'Could not locate one or both places'}), 404
+        
+    # Take top results
+    loc1 = origin_locs[0]
+    loc2 = dest_locs[0]
+    
+    # Calculate distance
+    from modules.geospatial_service import haversine_distance
+    distance = haversine_distance(loc1['lat'], loc1['lon'], loc2['lat'], loc2['lon'])
+    
+    return jsonify({
+        'distance_km': round(distance, 2),
+        'origin': loc1,
+        'destination': loc2
+    })
+
+
 @app.route('/api/pricing/<destination_id>')
 def api_pricing(destination_id):
     """API endpoint for pricing analysis"""
@@ -718,9 +750,10 @@ def api_calculate_distance():
 
 
 @app.route('/map')
+@login_required
 def map_page():
-    """Interactive Map Selection Page"""
-    return render_template('map.html')
+    """Redirect Map Page to Planner"""
+    return redirect(url_for('planner', mode='map'))
 
 
 @app.route('/plan-custom')

@@ -1,5 +1,137 @@
 {% extends 'base.html' %}
 {% block title %}Carbon Calculator - EcoJourney{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const originInput = document.getElementById('origin-input');
+        const destInput = document.getElementById('dest-input');
+        const calculateBtn = document.querySelector('button[type="submit"]');
+
+        let originTimer, destTimer;
+
+        // Geolocation Logic
+        document.getElementById('locate-btn').addEventListener('click', () => {
+            const btn = document.getElementById('locate-btn');
+            btn.classList.add('animate-pulse', 'text-eco-400');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    // Reverse Geocode to get City Name
+                    try {
+                        // Using generic OSM reverse geocoding via our backend or simple string
+                        // Since we don't have a direct reverse geocode endpoint exposed yet, 
+                        // let's pass a special flag or just set coords as value
+                        // ideally we want a semantic name. 
+                        // Let's assume user is okay with "My Location" but we need real text for the backend calculation
+                        // Actually, let's just reverse geocode client-side or add an endpoint.
+                        // Simplest: Use Nominatim directly for this client-side enhancement
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const data = await res.json();
+                        const city = data.address.city || data.address.town || data.address.village || "My Location";
+
+                        originInput.value = city; // Or full display_name
+                        btn.classList.remove('animate-pulse');
+                        triggerCalculation();
+                    } catch (e) {
+                        console.error(e);
+                        originInput.value = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`; // Fallback
+                        btn.classList.remove('animate-pulse');
+                    }
+                }, () => {
+                    alert("Location access denied.");
+                    btn.classList.remove('animate-pulse');
+                });
+            }
+        });
+
+        // Autocomplete Logic
+        const setupAutocomplete = (input, resultsDiv) => {
+            input.addEventListener('input', (e) => {
+                const query = e.target.value;
+                if (query.length < 3) {
+                    resultsDiv.classList.add('hidden');
+                    return;
+                }
+
+                // Debounce
+                clearTimeout(input.timer);
+                input.timer = setTimeout(async () => {
+                    try {
+                        const res = await fetch('/api/geocode', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ query })
+                        });
+                        const data = await res.json();
+
+                        resultsDiv.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(place => {
+                                const div = document.createElement('div');
+                                div.className = 'px-4 py-2 hover:bg-slate-700 cursor-pointer border-b border-slate-700 last:border-0 text-sm';
+                                div.textContent = place.display_name || place.name; // Backend returns 'name' and 'full_name' usually? check geospatial service
+                                // GeospatialService returns 'name' and 'full_name'
+                                div.innerHTML = `<span class="font-bold block">${place.name}</span><span class="text-xs text-gray-400">${place.full_name}</span>`;
+
+                                div.addEventListener('click', () => {
+                                    input.value = place.name; // Use simple name for display
+                                    resultsDiv.classList.add('hidden');
+                                    triggerCalculation();
+                                });
+                                resultsDiv.appendChild(div);
+                            });
+                            resultsDiv.classList.remove('hidden');
+                        } else {
+                            resultsDiv.classList.add('hidden');
+                        }
+                    } catch (e) { console.error(e); }
+                }, 500);
+            });
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !resultsDiv.contains(e.target)) {
+                    resultsDiv.classList.add('hidden');
+                }
+            });
+        };
+
+        setupAutocomplete(originInput, document.getElementById('origin-suggestions'));
+        setupAutocomplete(destInput, document.getElementById('dest-suggestions'));
+
+        // Auto Calculate Distance
+        async function triggerCalculation() {
+            const origin = originInput.value;
+            const dest = destInput.value;
+
+            if (origin.length > 2 && dest.length > 2) {
+                try {
+                    const res = await fetch('/api/calculate-trip', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ origin, destination: dest })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        document.getElementById('distance-input').value = data.distance_km;
+
+                        const display = document.getElementById('distance-display');
+                        display.textContent = `${data.distance_km} km`;
+
+                        document.getElementById('distance-display-container').classList.remove('hidden');
+                    }
+                } catch (e) {
+                    console.error("Distance calc failed", e);
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
 {% block content %}
 <div class="min-h-screen bg-slate-900 py-20">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,10 +160,57 @@
                             <option value="electric_car">⚡ Electric Car</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Distance (km)</label>
-                        <input type="number" name="distance" value="500" min="1" max="10000"
-                            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 focus:border-eco-500">
+                    <!-- Origin & Destination -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="relative">
+                            <label class="block text-sm font-medium mb-2">Origin</label>
+                            <div class="relative">
+                                <input type="text" id="origin-input" name="origin"
+                                    placeholder="City, Station, or Address"
+                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-4 pr-10 py-3 focus:border-eco-500 focus:ring-1 focus:ring-eco-500 transition-colors">
+                                <button type="button" id="locate-btn" title="Use My Location"
+                                    class="absolute right-3 top-3 text-gray-400 hover:text-eco-400 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                        </path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </button>
+                                <!-- Suggestions Panel -->
+                                <div id="origin-suggestions"
+                                    class="absolute w-full mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 hidden max-h-48 overflow-y-auto custom-scroll">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-sm font-medium mb-2">Destination</label>
+                            <div class="relative">
+                                <input type="text" id="dest-input" name="destination" placeholder="Where to?"
+                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-4 pr-10 py-3 focus:border-eco-500 focus:ring-1 focus:ring-eco-500 transition-colors">
+                                <div class="absolute right-3 top-3 text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <!-- Suggestions Panel -->
+                                <div id="dest-suggestions"
+                                    class="absolute w-full mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-50 hidden max-h-48 overflow-y-auto custom-scroll">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Distance Field (Auto-populated) -->
+                    <div id="distance-display-container"
+                        class="hidden animate-fade-in p-4 bg-eco-500/10 border border-eco-500/30 rounded-xl">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-300">Measured Distance:</span>
+                            <span class="text-xl font-bold text-eco-400" id="distance-display">0 km</span>
+                        </div>
+                        <input type="hidden" id="distance-input" name="distance" value="500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Passengers (for car)</label>
